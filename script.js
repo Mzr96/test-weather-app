@@ -5,7 +5,7 @@ const apiKey = "b4dfadf0c642efeb5ff9d984a82da693";
 const getCityCor = async function () {
   const city = document.querySelector("#search").value;
   const cityGeo = await fetch(
-    `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`
+    `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`
   );
   const [cityGeoJSON] = await cityGeo.json();
   console.log(cityGeoJSON);
