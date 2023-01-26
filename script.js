@@ -20,11 +20,9 @@ const getCityCoordinate = async function (cityName) {
     const cityResponse = await fetch(
       `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`
     );
-    console.log(cityResponse);
     const [cityData] = await cityResponse.json();
     if (!cityData) throw new Error("There is not such a city");
     const coordinate = { lat: cityData.lat, lon: cityData.lon };
-    console.log(cityData);
     return coordinate;
   } catch (err) {
     alert(err);
@@ -32,17 +30,40 @@ const getCityCoordinate = async function (cityName) {
 };
 getCityCoordinate("beijing");
 
-const getCityWeather = async function () {
-  const cityCor = await getCityCoordinate();
-  //   console.log(cityCor.lat, cityCor.lon);
-  const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${cityCor.lat}&lon=${cityCor.lon}&appid=${apiKey}&units=metric`
+const getCityWeather = async function (cityName) {
+  const cityCoordinate = await getCityCoordinate(cityName);
+  const cityResponse = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}&units=metric`
   );
-
-  const responseJSON = await response.json();
-  console.log(responseJSON);
-  return responseJSON;
+  const cityData = await cityResponse.json();
+  console.log(cityData);
+  return cityData;
 };
+
+const getCityPollution = async function (cityName) {
+  const cityCoordinate = await getCityCoordinate(cityName);
+  const cityResponse = await fetch(
+    `https://api.openweathermap.org/data/2.5/air_pollution?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}`
+  );
+  const cityData = await cityResponse.json();
+  console.log(cityData);
+  return cityData;
+};
+
+const getCityForecast = async function (cityName) {
+  const cityCoordinate = await getCityCoordinate(cityName);
+  const cityResponse = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}&units=metric`
+  );
+  const cityData = await cityResponse.json();
+  const cityForecasts = cityData.list;
+  console.log(cityForecasts);
+  return cityData;
+};
+
+getCityWeather("london");
+getCityPollution("tehran");
+getCityForecast("tehran");
 
 const polishedData = async function () {
   const data = await getCityWeather();
