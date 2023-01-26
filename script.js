@@ -1,22 +1,39 @@
 "use strict";
 
 const apiKey = "b4dfadf0c642efeb5ff9d984a82da693";
+const cityNameInput = document.querySelector("#search").value;
 
-const getCityCor = async function () {
-  const city = document.querySelector("#search").value;
-  const cityGeo = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`
-  );
-  const [cityGeoJSON] = await cityGeo.json();
-  console.log(cityGeoJSON);
-  return {
-    lat: cityGeoJSON.lat,
-    lon: cityGeoJSON.lon,
-  };
+// const getCityCor = async function (city) {
+//   const cityGeo = await fetch(
+//     `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`
+//   );
+//   const cityGeoJSON = await cityGeo.json();
+//   console.log(cityGeoJSON);
+//   return {
+//     lat: cityGeoJSON.lat,
+//     lon: cityGeoJSON.lon,
+//   };
+// };
+
+const getCityCoordinate = async function (cityName) {
+  try {
+    const cityResponse = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`
+    );
+    console.log(cityResponse);
+    const [cityData] = await cityResponse.json();
+    if (!cityData) throw new Error("There is not such a city");
+    const coordinate = { lat: cityData.lat, lon: cityData.lon };
+    console.log(cityData);
+    return coordinate;
+  } catch (err) {
+    alert(err);
+  }
 };
+getCityCoordinate("beijing");
 
 const getCityWeather = async function () {
-  const cityCor = await getCityCor();
+  const cityCor = await getCityCoordinate();
   //   console.log(cityCor.lat, cityCor.lon);
   const response = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${cityCor.lat}&lon=${cityCor.lon}&appid=${apiKey}&units=metric`
