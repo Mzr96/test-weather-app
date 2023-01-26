@@ -36,7 +36,6 @@ const getCityWeather = async function (cityName) {
     `https://api.openweathermap.org/data/2.5/weather?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}&units=metric`
   );
   const cityData = await cityResponse.json();
-  console.log(cityData);
   return cityData;
 };
 
@@ -46,7 +45,6 @@ const getCityPollution = async function (cityName) {
     `https://api.openweathermap.org/data/2.5/air_pollution?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}`
   );
   const cityData = await cityResponse.json();
-  console.log(cityData);
   return cityData;
 };
 
@@ -56,14 +54,30 @@ const getCityForecast = async function (cityName) {
     `https://api.openweathermap.org/data/2.5/forecast?lat=${cityCoordinate.lat}&lon=${cityCoordinate.lon}&appid=${apiKey}&units=metric`
   );
   const cityData = await cityResponse.json();
-  const cityForecasts = cityData.list;
-  console.log(cityForecasts);
-  return cityData;
+  const cityForecast = cityData.list;
+  return cityForecast;
 };
 
-getCityWeather("london");
-getCityPollution("tehran");
-getCityForecast("tehran");
+const abstractData = async function (cityName) {
+  const currentWeather = await getCityWeather(cityName);
+  const weatherForcast = await getCityForecast(cityName);
+  const currentTime = new Date().toLocaleTimeString("en-US", {
+    hour12: false,
+    hour: "numeric",
+    minute: "numeric",
+  });
+  return {
+    name: currentWeather.name,
+    time: currentTime,
+    precipitation: weatherForcast[0].pop,
+    temperature: currentWeather.main.temp,
+    temperatureMin: currentWeather.main.temp_min,
+    temperatureMax: currentWeather.main.temp_max,
+    windSpeed: currentWeather.wind.speed,
+  };
+};
+
+abstractData("tehran");
 
 const polishedData = async function () {
   const data = await getCityWeather();
